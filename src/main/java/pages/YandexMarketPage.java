@@ -1,8 +1,6 @@
 package pages;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import helpers.Constants;
 import org.openqa.selenium.By;
@@ -39,7 +37,7 @@ public class YandexMarketPage {
         inputSearch.sendKeys(search);
         buttonSearch.click();
     }
-    private void getCollections(List<WebElement>buffer, List<Map<String, Object>> collection, String xPath){
+    private void getCollections(List<Map<String, Object>> collection, String xPath){
         buffer = driver.findElements(By.xpath(xPath));
         for (WebElement result : buffer){
             collection.add(Map.of(
@@ -57,13 +55,13 @@ public class YandexMarketPage {
         Selenide.$(shoppingLinc).click();
     }
     public void getCategories(){
-        getCollections(buffer, this.categories, "//a[@class = '_3Lwc_']");
+        getCollections(categories, "//a[@class = '_3Lwc_']");
     }
     public void getSubCategories(){
-        getCollections(buffer, subCategories, "//ul[@data-autotest-id='subItems']//a");
+        getCollections(subCategories, "//ul[@data-autotest-id='subItems']//a");
     }
     public void getManufacturer(){
-        getCollections(buffer, manufacturer, "//legend[text()='Производитель']/ancestor::fieldset//label");
+        getCollections(manufacturer, "//legend[text()='Производитель']/ancestor::fieldset//label");
     }
     public void clickCategories(String nameCategories){
         clickElementBuffer(nameCategories, categories);
@@ -104,7 +102,7 @@ public class YandexMarketPage {
     }
     public String getTextFirstPrice(String key){
         if (titlePrice.get(key) == null){
-            titlePrice.put(key, Selenide.$(driver.findElement(By.xpath("//article//h3//a[@target='_blank']"))).waitUntil(Condition.visible, 9000).getText());
+            titlePrice.put(key, Selenide.$(driver.findElement(By.xpath("//article//h3//a[@target='_blank']"))).shouldBe(Condition.visible).getText());
         }
         return titlePrice.get(key);
     }
@@ -112,8 +110,8 @@ public class YandexMarketPage {
         List<String> pur = new ArrayList<>();
         buffer = driver.findElements(By.xpath("//article//h3//a[@target='_blank']/span"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//article//h3//a[@target='_blank']/span")));
-        for (int i = 0; i < buffer.size(); i++){
-            pur.add(buffer.get(i).getText());
+        for (WebElement webElement : buffer) {
+            pur.add(webElement.getText());
         }
         buffer.clear();
         return pur;
